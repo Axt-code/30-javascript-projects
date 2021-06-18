@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Video Speed Scrubber</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <!-- <div class="col">
+      <div class="drop-zone">
+        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+        <input type="file" name="myFile" class="drop-zone__input">
+      </div>
+    </div> -->
+
+    <div class="col">
+      <div class="wrapper">
+        <video class="flex" width="865" height="530" src="652333414.mp4" controls></video>
+        <div class="speed">
+   
+          <div class="speed-bar">1×</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="skip">
+        <button data-skip="-10" class="player__button">« 10s</button>
+        <button data-skip="+10" class="player__button">10s »</button>
+        <button data-skip="-25" class="player__button">« 25s</button>
+        <button data-skip="+25" class="player__button">25s »</button>
+      </div>
+    </div>
+
+
+    <script>
+      const video = document.querySelector('video');
+      const speed = document.querySelector('.speed');
+      const bar = document.querySelector('.speed-bar');
+      const skipButtons = document.querySelectorAll('[data-skip]');
+
+      function speedControl(e,y) {
+        console.log(e)
+        y = e.pageY - this.offsetTop;
+        console.log(y)
+        const percentage = y / this.offsetHeight;
+        const [min,max] = [0.001,10];
+        console.log(min,max);
+        const height = Math.round(percentage * 100) + '%';
+        const playbackRate = percentage * (max - min) + min;
+        console.log(height,playbackRate)
+        bar.style.height = height;
+        bar.textContent = playbackRate.toFixed(2) + '×';
+        video.playbackRate = playbackRate;
+
+      }
+
+
+
+
+
+      function skip() {
+        console.log("skip")
+        video.currentTime += parseFloat(this.dataset.skip);
+      }
+
+      speed.addEventListener('mousemove',speedControl);
+      //speed.addEventListener('click',speedControl(1));
+      skipButtons.forEach(button => button.addEventListener('click',skip));
+
+
+
+
+
+//   document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+//   const dropZoneElement = inputElement.closest(".drop-zone");
+
+//   dropZoneElement.addEventListener("click", (e) => {
+//     inputElement.click();
+//   });
+
+//   inputElement.addEventListener("change", (e) => {
+//     if (inputElement.files.length) {
+//       updateThumbnail(dropZoneElement, inputElement.files[0]);
+//     }
+//   });
+
+//   dropZoneElement.addEventListener("dragover", (e) => {
+//     e.preventDefault();
+//     dropZoneElement.classList.add("drop-zone--over");
+//   });
+
+//   ["dragleave", "dragend"].forEach((type) => {
+//     dropZoneElement.addEventListener(type, (e) => {
+//       dropZoneElement.classList.remove("drop-zone--over");
+//     });
+//   });
+
+//   dropZoneElement.addEventListener("drop", (e) => {
+//     e.preventDefault();
+
+//     if (e.dataTransfer.files.length) {
+//       inputElement.files = e.dataTransfer.files;
+//       updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+//     }
+
+//     dropZoneElement.classList.remove("drop-zone--over");
+//   });
+// });
+
+// function updateThumbnail(dropZoneElement, file) {
+//   console.log(file);
+//   video.src = file.name;
+//   video.play;
+// }
+
+
+    </script>
+  </body>
+
+</html>

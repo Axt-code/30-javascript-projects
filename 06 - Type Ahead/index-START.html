@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <div class="match" style="text-align: center; font-size: larger;"><b><span class="matched">0</span> Matched</b></div>
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+
+
+<script>
+
+</script>
+</script>
+<script>
+
+var x = document.getElementById("demo");
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+let lalit=0, long=0;
+function showPosition(position) {
+  lalit=position.coords.latitude;
+  long=position.coords.longitude;
+ console.log( position.coords.latitude,  position.coords.longitude);
+}
+
+getLocation();
+
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+//fetch return promise
+//then returns blob
+//we have to convert blob to json
+//and we have a fucntion for that.
+//this will return another promise which we can use
+
+
+const cities = [];
+const prom = fetch(endpoint)
+              .then(blob=>blob.json())
+                .then(data=>cities.push(...data));
+
+
+//We cannot directly assign dat to cities because it is const
+
+//cities.push(data) return array in array
+//cities.push(...data) is the right one for this
+
+function findMatches(wordToMatch, cities) {
+  return cities.filter(place => {
+    //here we need to figure out if the sity or state matches what was searched
+    const regex = new RegExp(wordToMatch, 'gi');
+    return place.city.match(regex) || place .state.match(regex)
+  })
+}
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function displayMatches()
+{
+  const matchArray = findMatches(this.value, cities);
+  const place_from_north = matchArray.sort((a,b)=>{
+    Math.abs(a.longitude-lalit) < Math.abs(b.longitude-lalit)?1:-1;
+  })
+  const html = place_from_north.map(place => {
+    const regex = new RegExp(this.value, 'gi');
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`)
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`)
+    
+    return`
+     <li>
+      <span class="name">${cityName}, ${stateName}</span>
+      <span class="population">${numberWithCommas(place.population)}</span>
+      </li>
+    `;
+  }).join('');
+  suggestions.innerHTML = html;
+  match.innerHTML = matchArray.length;
+}
+
+const searchInputs = document.querySelector('.search');
+const suggestions = document.querySelector('.suggestions');
+const match = document.querySelector('.matched');
+
+searchInputs.addEventListener('change', displayMatches);
+searchInputs.addEventListener('keyup', displayMatches);
+
+
+
+</script>
+</body>
+</html>
